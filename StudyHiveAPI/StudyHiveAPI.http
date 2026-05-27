@@ -1,0 +1,6 @@
+@StudyHiveAPI_HostAddress = http://localhost:5197
+
+GET {{StudyHiveAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

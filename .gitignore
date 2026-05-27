@@ -1,0 +1,88 @@
+# =========================================================
+# GENERAL
+# =========================================================
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# =========================================================
+# VS CODE
+# =========================================================
+.vscode/
+
+# =========================================================
+# FLUTTER / DART
+# =========================================================
+frontend/.dart_tool/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/.packages
+frontend/.pub/
+frontend/.pub-cache/
+frontend/build/
+
+# Flutter generated docs
+frontend/**/doc/api/
+
+# Flutter symbolication
+frontend/app.*.symbols
+frontend/app.*.map.json
+
+# =========================================================
+# ANDROID / GRADLE
+# =========================================================
+frontend/android/.gradle/
+frontend/android/app/build/
+frontend/android/app/debug/
+frontend/android/app/profile/
+frontend/android/app/release/
+
+# =========================================================
+# IOS / MACOS
+# =========================================================
+frontend/**/ios/Flutter/.last_build_id
+frontend/ios/Pods/
+
+# =========================================================
+# INTELLIJ / ANDROID STUDIO
+# =========================================================
+frontend/.idea/
+frontend/*.iml
+frontend/*.ipr
+frontend/*.iws
+
+# =========================================================
+# ASP.NET CORE / VISUAL STUDIO
+# =========================================================
+StudyHiveAPI/bin/
+StudyHiveAPI/obj/
+StudyHiveAPI/.vs/
+
+# Visual Studio user-specific files
+*.csproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# =========================================================
+# NUGET
+# =========================================================
+*.nupkg
+packages/
+
+# =========================================================
+# BACKEND LOCAL FILES
+# =========================================================
+StudyHiveAPI/Uploads/
+StudyHiveAPI/appsettings.Development.json
+
+# =========================================================
+# ENV FILES
+# =========================================================
+.env
+.env.*
