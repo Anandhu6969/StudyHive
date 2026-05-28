@@ -17,21 +17,11 @@ class ScaffoldWithNavBar extends StatelessWidget {
     return Scaffold(
       body: child,
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surfaceCard,
+        decoration: const BoxDecoration(
+          color: AppColors.background,
           border: Border(
-            top: BorderSide(
-              color: AppColors.surfaceElevated.withValues(alpha: 0.5),
-              width: 1,
-            ),
+            top: BorderSide(color: Color(0xFF1A1A1A), width: 1),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
-              blurRadius: 10,
-              offset: const Offset(0, -4),
-            ),
-          ],
         ),
         child: SafeArea(
           child: Padding(
@@ -57,7 +47,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
                     label: 'Upload',
                     isSelected: _currentIndex(context) == 2,
                     onTap: () => context.go('/upload'),
-                    isSpecial: true,
                   ),
                 _NavItem(
                   icon: Icons.person_rounded,
@@ -91,14 +80,12 @@ class _NavItem extends StatelessWidget {
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
-  final bool isSpecial;
 
   const _NavItem({
     required this.icon,
     required this.label,
     required this.isSelected,
     required this.onTap,
-    this.isSpecial = false,
   });
 
   @override
@@ -108,32 +95,24 @@ class _NavItem extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          gradient: isSelected
-              ? (isSpecial
-                  ? AppColors.accentGradient
-                  : AppColors.primaryGradient)
-              : null,
-          borderRadius: BorderRadius.circular(12),
+          color: isSelected ? const Color(0xFF00CCFF) : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
-              color: isSelected
-                  ? AppColors.textPrimary
-                  : AppColors.textHint,
+              color: isSelected ? Colors.white : AppColors.textHint,
               size: 24,
             ),
             const SizedBox(height: 2),
             Text(
               label,
               style: TextStyle(
-                color: isSelected
-                    ? AppColors.textPrimary
-                    : AppColors.textHint,
+                color: isSelected ? Colors.white : AppColors.textHint,
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),

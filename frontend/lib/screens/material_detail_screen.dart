@@ -15,7 +15,6 @@ import '../providers/profile_provider.dart';
 
 class MaterialDetailScreen extends StatefulWidget {
   final int materialId;
-
   const MaterialDetailScreen({super.key, required this.materialId});
 
   @override
@@ -37,49 +36,29 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
   Future<void> _downloadFile() async {
     final material = context.read<MaterialProvider>().selectedMaterial;
     setState(() => _isDownloading = true);
-
     try {
       final materialService = MaterialService();
       final response = await materialService.downloadMaterial(widget.materialId);
-
       final dir = await getApplicationDocumentsDirectory();
-
-      // Build a readable filename using title + correct extension
       final ext = material?.fileType?.toLowerCase() ??
-          (material?.filePath != null
-              ? material!.filePath!.split('.').last.toLowerCase()
-              : 'pdf');
+          (material?.filePath != null ? material!.filePath!.split('.').last.toLowerCase() : 'pdf');
       final safeName = (material?.title ?? 'download')
-          .replaceAll(RegExp(r'[^\w\s]'), '')
-          .trim()
-          .replaceAll(' ', '_');
+          .replaceAll(RegExp(r'[^\w\s]'), '').trim().replaceAll(' ', '_');
       final fileName = '${safeName}_${widget.materialId}.$ext';
       final filePath = '${dir.path}/$fileName';
-
       final file = File(filePath);
       await file.writeAsBytes(response.data as List<int>);
       await context.read<ProfileProvider>().fetchMyDownloads();
-
       if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Downloaded: $fileName'),
-          backgroundColor: AppColors.success,
-          action: SnackBarAction(
-            label: 'Open',
-            textColor: Colors.white,
-            onPressed: () => OpenFile.open(filePath),
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Downloaded: $fileName'),
+        backgroundColor: AppColors.success,
+        action: SnackBarAction(label: 'Open', textColor: Colors.white, onPressed: () => OpenFile.open(filePath)),
+      ));
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Download failed: $e'),
-          backgroundColor: AppColors.error,
-        ),
+        SnackBar(content: Text('Download failed: $e'), backgroundColor: AppColors.error),
       );
     } finally {
       if (mounted) setState(() => _isDownloading = false);
@@ -95,43 +74,30 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
 
     if (materialProvider.isLoading || material == null) {
       return Scaffold(
-        backgroundColor: AppColors.surfaceDark,
+        backgroundColor: AppColors.background,
         appBar: AppBar(backgroundColor: Colors.transparent),
-        body: const Center(
-          child: CircularProgressIndicator(color: AppColors.accentOrange),
-        ),
+        body: const Center(child: CircularProgressIndicator(color: AppColors.gradientStart)),
       );
     }
 
     final isBookmarked = bookmarkProvider.isMaterialBookmarked(material.id);
-    final displayRating = ratingProvider.ratings.isNotEmpty
-        ? ratingProvider.averageRating
-        : material.averageRating;
-    final ratingCount = ratingProvider.ratings.isNotEmpty
-        ? ratingProvider.ratings.length
-        : material.totalRatings;
+    final displayRating = ratingProvider.ratings.isNotEmpty ? ratingProvider.averageRating : material.averageRating;
+    final ratingCount = ratingProvider.ratings.isNotEmpty ? ratingProvider.ratings.length : material.totalRatings;
 
     return Scaffold(
-      backgroundColor: AppColors.surfaceDark,
+      backgroundColor: AppColors.background,
       body: CustomScrollView(
         slivers: [
-          // App bar with gradient
           SliverAppBar(
             expandedHeight: 200,
             pinned: true,
-            backgroundColor: AppColors.surfaceDark,
+            backgroundColor: AppColors.background,
             leading: GestureDetector(
               onTap: () => Navigator.pop(context),
               child: Container(
                 margin: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.arrow_back_rounded,
-                  color: Colors.white,
-                ),
+                decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(12)),
+                child: const Icon(Icons.arrow_back_rounded, color: Colors.white),
               ),
             ),
             actions: [
@@ -139,17 +105,11 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                 onTap: () => bookmarkProvider.toggleBookmark(material.id),
                 child: Container(
                   margin: const EdgeInsets.all(8),
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  width: 42, height: 42,
+                  decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(12)),
                   child: Icon(
-                    isBookmarked
-                        ? Icons.bookmark_rounded
-                        : Icons.bookmark_border_rounded,
-                    color: isBookmarked ? AppColors.accentOrange : Colors.white,
+                    isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                    color: isBookmarked ? AppColors.gradientStart : Colors.white,
                   ),
                 ),
               ),
@@ -160,11 +120,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFF1565C0),
-                      Color(0xFF0D47A1),
-                      Color(0xFFFF6D00),
-                    ],
+                    colors: [AppColors.gradientStart, AppColors.gradientEnd],
                   ),
                 ),
                 child: Center(
@@ -173,37 +129,23 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                     children: [
                       const SizedBox(height: 40),
                       Container(
-                        width: 70,
-                        height: 70,
+                        width: 70, height: 70,
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.15),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(18),
                         ),
-                        child: Icon(
-                          _getFileIcon(material.fileExtension),
-                          color: Colors.white,
-                          size: 36,
-                        ),
+                        child: Icon(_getFileIcon(material.fileExtension), color: Colors.white, size: 36),
                       ),
                       const SizedBox(height: 12),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 4,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          material.fileExtension.isNotEmpty
-                              ? material.fileExtension
-                              : 'FILE',
-                          style: GoogleFonts.inter(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
+                          material.fileExtension.isNotEmpty ? material.fileExtension : 'FILE',
+                          style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
                         ),
                       ),
                     ],
@@ -213,83 +155,45 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
             ),
           ),
 
-          // Content
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title
-                  Text(
-                    material.title,
-                    style: GoogleFonts.poppins(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
+                  Text(material.title,
+                      style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
                   const SizedBox(height: 12),
 
-                  // Subject & course badges
                   Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
+                    spacing: 8, runSpacing: 8,
                     children: [
-                      _InfoBadge(
-                        icon: Icons.subject_rounded,
-                        label: material.subject,
-                        gradient: AppColors.primaryGradient,
-                      ),
+                      _InfoBadge(icon: Icons.subject_rounded, label: material.subject, gradient: AppColors.primaryGradient),
                       if (material.course != null && material.course!.isNotEmpty)
-                        _InfoBadge(
-                          icon: Icons.school_rounded,
-                          label: material.course!,
-                          gradient: AppColors.accentGradient,
-                        ),
+                        _InfoBadge(icon: Icons.school_rounded, label: material.course!, gradient: AppColors.primaryGradient),
                     ],
                   ),
                   const SizedBox(height: 20),
 
-                  // Rating section
+                  // Rating
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceCard,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: AppColors.surfaceElevated,
-                        width: 1,
-                      ),
+                      border: Border.all(color: AppColors.surfaceElevated, width: 1),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            const Icon(
-                              Icons.star_rounded,
-                              color: AppColors.accentOrange,
-                              size: 22,
-                            ),
+                            const Icon(Icons.star_rounded, color: AppColors.gradientStart, size: 22),
                             const SizedBox(width: 8),
-                            Text(
-                              'Rating',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
+                            Text('Rating', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                             const Spacer(),
-                            Text(
-                              '${displayRating.toStringAsFixed(1)} / 5.0',
-                              style: GoogleFonts.inter(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.accentOrange,
-                              ),
-                            ),
+                            Text('${displayRating.toStringAsFixed(1)} / 5.0',
+                                style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.gradientStart)),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -304,107 +208,42 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                                 itemCount: 5,
                                 itemSize: 36,
                                 unratedColor: AppColors.surfaceElevated,
-                                itemBuilder: (context, _) => const Icon(
-                                  Icons.star_rounded,
-                                  color: AppColors.accentOrange,
-                                ),
+                                itemBuilder: (context, _) => const Icon(Icons.star_rounded, color: AppColors.gradientStart),
                                 onRatingUpdate: (rating) async {
-                                  final messenger =
-                                      ScaffoldMessenger.of(context);
-                                  final success =
-                                      await ratingProvider.submitRating(
-                                    material.id,
-                                    rating.toInt(),
-                                  );
+                                  final messenger = ScaffoldMessenger.of(context);
+                                  final success = await ratingProvider.submitRating(material.id, rating.toInt());
                                   if (!mounted) return;
-                                  messenger.showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        success
-                                            ? 'Rating submitted!'
-                                            : 'Failed to submit rating',
-                                      ),
-                                      backgroundColor: success
-                                          ? AppColors.success
-                                          : AppColors.error,
-                                    ),
-                                  );
+                                  messenger.showSnackBar(SnackBar(
+                                    content: Text(success ? 'Rating submitted!' : 'Failed to submit rating'),
+                                    backgroundColor: success ? AppColors.success : AppColors.error,
+                                  ));
                                 },
                               );
                             },
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Center(
-                          child: Text(
-                            '$ratingCount ratings',
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              color: AppColors.textHint,
-                            ),
-                          ),
-                        ),
+                        Center(child: Text('$ratingCount ratings', style: GoogleFonts.inter(fontSize: 12, color: AppColors.textHint))),
                       ],
                     ),
                   ),
                   const SizedBox(height: 20),
 
-                  // Description
-                  Text(
-                    'Description',
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
+                  Text('Description', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                   const SizedBox(height: 8),
-                  Text(
-                    material.description,
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      color: AppColors.textSecondary,
-                      height: 1.6,
-                    ),
-                  ),
+                  Text(material.description, style: GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary, height: 1.6)),
                   const SizedBox(height: 20),
 
-                  // Tags
                   if (material.tagList.isNotEmpty) ...[
-                    Text(
-                      'Tags',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
+                    Text('Tags', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                     const SizedBox(height: 8),
                     Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: material.tagList
-                          .map(
-                            (tag) => Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.surfaceElevated,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                '#$tag',
-                                style: GoogleFonts.inter(
-                                  fontSize: 12,
-                                  color: AppColors.lightBlue,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
+                      spacing: 8, runSpacing: 8,
+                      children: material.tagList.map((tag) => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(color: AppColors.surfaceElevated, borderRadius: BorderRadius.circular(8)),
+                        child: Text('#$tag', style: GoogleFonts.inter(fontSize: 12, color: AppColors.gradientEnd, fontWeight: FontWeight.w500)),
+                      )).toList(),
                     ),
                     const SizedBox(height: 20),
                   ],
@@ -415,65 +254,33 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.surfaceCard,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: AppColors.surfaceElevated,
-                        width: 1,
-                      ),
+                      border: Border.all(color: AppColors.surfaceElevated, width: 1),
                     ),
                     child: Row(
                       children: [
                         Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            gradient: AppColors.primaryGradient,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.person_rounded,
-                            color: Colors.white,
-                            size: 22,
-                          ),
+                          width: 44, height: 44,
+                          decoration: BoxDecoration(gradient: AppColors.primaryGradient, borderRadius: BorderRadius.circular(12)),
+                          child: const Icon(Icons.person_rounded, color: Colors.white, size: 22),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                material.uploaderName ?? 'Unknown',
-                                style: GoogleFonts.inter(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
-                                ),
-                              ),
+                              Text(material.uploaderName ?? 'Unknown',
+                                  style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                               if (material.uploadedAt != null)
-                                Text(
-                                  'Uploaded ${_formatDate(material.uploadedAt!)}',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 12,
-                                    color: AppColors.textHint,
-                                  ),
-                                ),
+                                Text('Uploaded ${_formatDate(material.uploadedAt!)}',
+                                    style: GoogleFonts.inter(fontSize: 12, color: AppColors.textHint)),
                             ],
                           ),
                         ),
                         Column(
                           children: [
-                            const Icon(
-                              Icons.download_rounded,
-                              color: AppColors.textHint,
-                              size: 18,
-                            ),
+                            const Icon(Icons.download_rounded, color: AppColors.textHint, size: 18),
                             const SizedBox(height: 2),
-                            Text(
-                              '${material.downloadCount}',
-                              style: GoogleFonts.inter(
-                                fontSize: 12,
-                                color: AppColors.textHint,
-                              ),
-                            ),
+                            Text('${material.downloadCount}', style: GoogleFonts.inter(fontSize: 12, color: AppColors.textHint)),
                           ],
                         ),
                       ],
@@ -481,13 +288,11 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                   ),
                   const SizedBox(height: 28),
 
-                  // Download button
                   GradientButton(
                     text: _isDownloading ? 'Downloading...' : 'Download Material',
                     isLoading: _isDownloading,
                     onPressed: _isDownloading ? null : _downloadFile,
                     icon: Icons.download_rounded,
-                    gradient: AppColors.accentGradient,
                   ),
                   const SizedBox(height: 40),
                 ],
@@ -501,34 +306,20 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
 
   IconData _getFileIcon(String ext) {
     switch (ext.toLowerCase()) {
-      case 'pdf':
-        return Icons.picture_as_pdf_rounded;
-      case 'doc':
-      case 'docx':
-        return Icons.description_rounded;
-      case 'ppt':
-      case 'pptx':
-        return Icons.slideshow_rounded;
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-        return Icons.image_rounded;
-      default:
-        return Icons.insert_drive_file_rounded;
+      case 'pdf': return Icons.picture_as_pdf_rounded;
+      case 'doc': case 'docx': return Icons.description_rounded;
+      case 'ppt': case 'pptx': return Icons.slideshow_rounded;
+      case 'jpg': case 'jpeg': case 'png': return Icons.image_rounded;
+      default: return Icons.insert_drive_file_rounded;
     }
   }
 
   String _formatDate(DateTime date) {
     final diff = DateTime.now().difference(date);
-    if (diff.inDays > 30) {
-      return '${date.day}/${date.month}/${date.year}';
-    } else if (diff.inDays > 0) {
-      return '${diff.inDays}d ago';
-    } else if (diff.inHours > 0) {
-      return '${diff.inHours}h ago';
-    } else {
-      return 'Just now';
-    }
+    if (diff.inDays > 30) return '${date.day}/${date.month}/${date.year}';
+    if (diff.inDays > 0) return '${diff.inDays}d ago';
+    if (diff.inHours > 0) return '${diff.inHours}h ago';
+    return 'Just now';
   }
 }
 
@@ -537,33 +328,19 @@ class _InfoBadge extends StatelessWidget {
   final String label;
   final LinearGradient gradient;
 
-  const _InfoBadge({
-    required this.icon,
-    required this.label,
-    required this.gradient,
-  });
+  const _InfoBadge({required this.icon, required this.label, required this.gradient});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        gradient: gradient,
-        borderRadius: BorderRadius.circular(8),
-      ),
+      decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(8)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: Colors.white, size: 14),
           const SizedBox(width: 6),
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
+          Text(label, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white)),
         ],
       ),
     );

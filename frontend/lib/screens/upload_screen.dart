@@ -25,23 +25,9 @@ class _UploadScreenState extends State<UploadScreen> {
   PlatformFile? _selectedFile;
 
   final List<String> _subjects = [
-    'Mathematics',
-    'Physics',
-    'Chemistry',
-    'Biology',
-    'Computer Science',
-    'English',
-    'History',
-    'Geography',
-    'Economics',
-    'Psychology',
-    'Engineering',
-    'Medicine',
-    'Law',
-    'Business',
-    'Art',
-    'Music',
-    'Other',
+    'Mathematics','Physics','Chemistry','Biology','Computer Science',
+    'English','History','Geography','Economics','Psychology',
+    'Engineering','Medicine','Law','Business','Art','Music','Other',
   ];
 
   @override
@@ -55,49 +41,29 @@ class _UploadScreenState extends State<UploadScreen> {
   }
 
   String get _subjectToUpload {
-    if (_selectedSubject == 'Other') {
-      return _customSubjectController.text.trim();
-    }
-
+    if (_selectedSubject == 'Other') return _customSubjectController.text.trim();
     return _selectedSubject?.trim() ?? '';
   }
 
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: [
-        'pdf',
-        'doc',
-        'docx',
-        'ppt',
-        'pptx',
-        'jpg',
-        'jpeg',
-        'png',
-      ],
+      allowedExtensions: ['pdf','doc','docx','ppt','pptx','jpg','jpeg','png'],
       withData: true,
     );
-
     if (result != null && result.files.isNotEmpty) {
-      setState(() {
-        _selectedFile = result.files.first;
-      });
+      setState(() => _selectedFile = result.files.first);
     }
   }
 
   Future<void> _upload() async {
     if (!_formKey.currentState!.validate()) return;
-
     if (_selectedFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a file to upload'),
-          backgroundColor: AppColors.error,
-        ),
+        const SnackBar(content: Text('Please select a file to upload'), backgroundColor: AppColors.error),
       );
       return;
     }
-
     final materialProvider = context.read<MaterialProvider>();
     final success = await materialProvider.uploadMaterial(
       title: _titleController.text.trim(),
@@ -107,32 +73,18 @@ class _UploadScreenState extends State<UploadScreen> {
       tags: _tagsController.text.trim(),
       file: _selectedFile!,
     );
-
     if (!mounted) return;
-
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Material uploaded successfully!'),
-          backgroundColor: AppColors.success,
-        ),
+        const SnackBar(content: Text('Material uploaded successfully!'), backgroundColor: AppColors.success),
       );
       _formKey.currentState!.reset();
-      _titleController.clear();
-      _descriptionController.clear();
-      _courseController.clear();
-      _tagsController.clear();
-      _customSubjectController.clear();
-      setState(() {
-        _selectedFile = null;
-        _selectedSubject = null;
-      });
+      _titleController.clear(); _descriptionController.clear();
+      _courseController.clear(); _tagsController.clear(); _customSubjectController.clear();
+      setState(() { _selectedFile = null; _selectedSubject = null; });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(materialProvider.error ?? 'Upload failed'),
-          backgroundColor: AppColors.error,
-        ),
+        SnackBar(content: Text(materialProvider.error ?? 'Upload failed'), backgroundColor: AppColors.error),
       );
     }
   }
@@ -142,7 +94,7 @@ class _UploadScreenState extends State<UploadScreen> {
     final materialProvider = context.watch<MaterialProvider>();
 
     return Scaffold(
-      backgroundColor: AppColors.surfaceDark,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -155,25 +107,13 @@ class _UploadScreenState extends State<UploadScreen> {
 
                 // Header
                 ShaderMask(
-                  shaderCallback: (bounds) =>
-                      AppColors.blueOrangeGradient.createShader(bounds),
-                  child: Text(
-                    'Upload Material',
-                    style: GoogleFonts.poppins(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
+                  shaderCallback: (bounds) => AppColors.primaryGradient.createShader(bounds),
+                  child: Text('Upload Material',
+                      style: GoogleFonts.poppins(fontSize: 28, fontWeight: FontWeight.w700, color: Colors.white)),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  'Share your study materials with the community',
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
+                Text('Share your study materials with the community',
+                    style: GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary)),
                 const SizedBox(height: 28),
 
                 // File picker
@@ -187,103 +127,53 @@ class _UploadScreenState extends State<UploadScreen> {
                       color: AppColors.surfaceCard,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: _selectedFile != null
-                            ? AppColors.success
-                            : AppColors.surfaceElevated,
+                        color: _selectedFile != null ? AppColors.success : AppColors.surfaceElevated,
                         width: 2,
-                        strokeAlign: BorderSide.strokeAlignInside,
                       ),
                     ),
                     child: Column(
                       children: [
                         Container(
-                          width: 60,
-                          height: 60,
+                          width: 60, height: 60,
                           decoration: BoxDecoration(
                             gradient: _selectedFile != null
-                                ? const LinearGradient(
-                                    colors: [
-                                      AppColors.success,
-                                      Color(0xFF00C853),
-                                    ],
-                                  )
-                                : AppColors.blueOrangeGradient,
+                                ? const LinearGradient(colors: [AppColors.success, Color(0xFF00C853)])
+                                : AppColors.primaryGradient,
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Icon(
-                            _selectedFile != null
-                                ? Icons.check_circle_rounded
-                                : Icons.cloud_upload_rounded,
-                            color: Colors.white,
-                            size: 30,
+                            _selectedFile != null ? Icons.check_circle_rounded : Icons.cloud_upload_rounded,
+                            color: Colors.white, size: 30,
                           ),
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          _selectedFile != null
-                              ? _selectedFile!.name
-                              : 'Tap to select a file',
+                          _selectedFile != null ? _selectedFile!.name : 'Tap to select a file',
                           style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: _selectedFile != null
-                                ? AppColors.success
-                                : AppColors.textPrimary,
+                            fontSize: 14, fontWeight: FontWeight.w600,
+                            color: _selectedFile != null ? AppColors.success : AppColors.textPrimary,
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        if (_selectedFile != null) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            '${(_selectedFile!.size / 1024 / 1024).toStringAsFixed(2)} MB',
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              color: AppColors.textHint,
-                            ),
-                          ),
-                        ] else ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            'PDF, DOC, PPT, JPG, PNG',
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              color: AppColors.textHint,
-                            ),
-                          ),
-                        ],
+                        const SizedBox(height: 4),
+                        Text(
+                          _selectedFile != null
+                              ? '${(_selectedFile!.size / 1024 / 1024).toStringAsFixed(2)} MB'
+                              : 'PDF, DOC, PPT, JPG, PNG',
+                          style: GoogleFonts.inter(fontSize: 12, color: AppColors.textHint),
+                        ),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 20),
 
-                // Title
-                CustomTextField(
-                  controller: _titleController,
-                  hintText: 'Material title',
-                  prefixIcon: Icons.title_rounded,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter a title';
-                    }
-                    return null;
-                  },
-                ),
+                CustomTextField(controller: _titleController, hintText: 'Material title', prefixIcon: Icons.title_rounded,
+                    validator: (v) => v == null || v.trim().isEmpty ? 'Please enter a title' : null),
                 const SizedBox(height: 14),
-
-                // Description
-                CustomTextField(
-                  controller: _descriptionController,
-                  hintText: 'Description',
-                  prefixIcon: Icons.description_rounded,
-                  maxLines: 3,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter a description';
-                    }
-                    return null;
-                  },
-                ),
+                CustomTextField(controller: _descriptionController, hintText: 'Description',
+                    prefixIcon: Icons.description_rounded, maxLines: 3,
+                    validator: (v) => v == null || v.trim().isEmpty ? 'Please enter a description' : null),
                 const SizedBox(height: 14),
 
                 // Subject dropdown
@@ -292,80 +182,38 @@ class _UploadScreenState extends State<UploadScreen> {
                   isExpanded: true,
                   hint: const Text('Select a subject'),
                   dropdownColor: AppColors.surfaceCard,
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: AppColors.textHint,
-                  ),
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 15,
-                  ),
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.subject_rounded),
-                  ),
-                  items: _subjects
-                      .map((s) => DropdownMenuItem(value: s, child: Text(s)))
-                      .toList(),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please select a subject';
-                    }
-                    return null;
-                  },
+                  icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textHint),
+                  style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
+                  decoration: const InputDecoration(prefixIcon: Icon(Icons.subject_rounded)),
+                  items: _subjects.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                  validator: (v) => v == null || v.isEmpty ? 'Please select a subject' : null,
                   onChanged: (value) {
                     setState(() {
                       _selectedSubject = value;
-                      if (value != 'Other') {
-                        _customSubjectController.clear();
-                      }
+                      if (value != 'Other') _customSubjectController.clear();
                     });
                   },
                 ),
                 const SizedBox(height: 14),
 
-                // Custom subject input - only shown when "Other" is selected
-                if (_selectedSubject == 'Other')
-                  Column(
-                    children: [
-                      CustomTextField(
-                        controller: _customSubjectController,
-                        hintText: 'Enter custom subject name',
-                        prefixIcon: Icons.label_rounded,
-                        validator: (value) {
-                          if (_selectedSubject == 'Other' &&
-                              (value == null || value.trim().isEmpty)) {
-                            return 'Please enter a custom subject';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 14),
-                    ],
-                  ),
+                if (_selectedSubject == 'Other') ...[
+                  CustomTextField(controller: _customSubjectController, hintText: 'Enter custom subject name',
+                      prefixIcon: Icons.label_rounded,
+                      validator: (v) => _selectedSubject == 'Other' && (v == null || v.trim().isEmpty)
+                          ? 'Please enter a custom subject' : null),
+                  const SizedBox(height: 14),
+                ],
 
-                // Course
-                CustomTextField(
-                  controller: _courseController,
-                  hintText: 'Course (optional)',
-                  prefixIcon: Icons.school_rounded,
-                ),
+                CustomTextField(controller: _courseController, hintText: 'Course (optional)', prefixIcon: Icons.school_rounded),
                 const SizedBox(height: 14),
-
-                // Tags
-                CustomTextField(
-                  controller: _tagsController,
-                  hintText: 'Tags (comma separated)',
-                  prefixIcon: Icons.tag_rounded,
-                ),
+                CustomTextField(controller: _tagsController, hintText: 'Tags (comma separated)', prefixIcon: Icons.tag_rounded),
                 const SizedBox(height: 28),
 
-                // Upload button
                 GradientButton(
                   text: 'Upload Material',
                   isLoading: materialProvider.isUploading,
                   onPressed: materialProvider.isUploading ? null : _upload,
                   icon: Icons.cloud_upload_rounded,
-                  gradient: AppColors.accentGradient,
                 ),
                 const SizedBox(height: 40),
               ],

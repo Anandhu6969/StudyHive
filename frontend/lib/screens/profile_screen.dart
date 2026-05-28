@@ -15,8 +15,7 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen>
-    with SingleTickerProviderStateMixin {
+class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -41,134 +40,70 @@ class _ProfileScreenState extends State<ProfileScreen>
     final user = authProvider.user;
 
     return Scaffold(
-      backgroundColor: AppColors.surfaceDark,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
             const SizedBox(height: 20),
 
-            // Profile header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  // Avatar
-                  Container(
-                    width: 90,
-                    height: 90,
-                    decoration: BoxDecoration(
-                      gradient: AppColors.blueOrangeGradient,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primaryBlue.withValues(alpha: 0.3),
-                          blurRadius: 20,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Text(
-                        (user?.fullName.isNotEmpty == true)
-                            ? user!.fullName[0].toUpperCase()
-                            : '?',
-                        style: GoogleFonts.poppins(
-                          fontSize: 36,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Name
-                  Text(
-                    user?.fullName ?? 'User',
-                    style: GoogleFonts.poppins(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-
-                  // Email
-                  Text(
-                    user?.email ?? '',
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Stats row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _StatItem(
-                        label: 'Uploads',
-                        value: '${profileProvider.myUploads.length}',
-                        icon: Icons.upload_file_rounded,
-                      ),
-                      Container(
-                        width: 1,
-                        height: 30,
-                        margin: const EdgeInsets.symmetric(horizontal: 24),
-                        color: AppColors.surfaceElevated,
-                      ),
-                      _StatItem(
-                        label: 'Downloads',
-                        value: '${profileProvider.myDownloads.length}',
-                        icon: Icons.download_rounded,
-                      ),
-                    ],
-                  ),
-                ],
+            // Avatar
+            Container(
+              width: 90, height: 90,
+              decoration: BoxDecoration(
+                gradient: AppColors.avatarGradient,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  (user?.fullName.isNotEmpty == true) ? user!.fullName[0].toUpperCase() : '?',
+                  style: GoogleFonts.poppins(fontSize: 36, fontWeight: FontWeight.w700, color: Colors.white),
+                ),
               ),
             ),
+            const SizedBox(height: 16),
 
+            Text(user?.fullName ?? 'User',
+                style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+            const SizedBox(height: 4),
+            Text(user?.email ?? '',
+                style: GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary)),
+            const SizedBox(height: 20),
+
+            // Stats
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _StatItem(label: 'Uploads', value: '${profileProvider.myUploads.length}', icon: Icons.upload_file_rounded),
+                Container(width: 1, height: 30, margin: const EdgeInsets.symmetric(horizontal: 24), color: AppColors.surfaceElevated),
+                _StatItem(label: 'Downloads', value: '${profileProvider.myDownloads.length}', icon: Icons.download_rounded),
+              ],
+            ),
             const SizedBox(height: 20),
 
             // Tab bar
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceCard,
-                borderRadius: BorderRadius.circular(12),
-              ),
+              decoration: BoxDecoration(color: AppColors.surfaceCard, borderRadius: BorderRadius.circular(12)),
               child: TabBar(
                 controller: _tabController,
                 indicatorSize: TabBarIndicatorSize.tab,
                 dividerColor: Colors.transparent,
                 indicator: BoxDecoration(
-                  gradient: AppColors.blueOrangeGradient,
+                  gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 labelColor: Colors.white,
                 unselectedLabelColor: AppColors.textHint,
-                labelStyle: GoogleFonts.inter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-                tabs: const [
-                  Tab(text: 'My Uploads'),
-                  Tab(text: 'My Downloads'),
-                ],
+                labelStyle: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
+                tabs: const [Tab(text: 'My Uploads'), Tab(text: 'My Downloads')],
               ),
             ),
-
             const SizedBox(height: 12),
 
             // Tab views
             Expanded(
               child: profileProvider.isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.accentOrange,
-                      ),
-                    )
+                  ? const Center(child: CircularProgressIndicator(color: AppColors.gradientStart))
                   : TabBarView(
                       controller: _tabController,
                       children: [
@@ -182,75 +117,30 @@ class _ProfileScreenState extends State<ProfileScreen>
                               context: context,
                               builder: (context) => AlertDialog(
                                 backgroundColor: AppColors.surfaceCard,
-                                title: Text(
-                                  'Delete Material',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.textPrimary,
-                                  ),
-                                ),
-                                content: Text(
-                                  'Are you sure you want to delete this material? This action cannot be undone.',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 14,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                ),
+                                title: Text('Delete Material',
+                                    style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                                content: Text('Are you sure you want to delete this material? This action cannot be undone.',
+                                    style: GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary)),
                                 actions: [
                                   TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(false),
-                                    child: Text(
-                                      'Cancel',
-                                      style: GoogleFonts.inter(
-                                        color: AppColors.textSecondary,
-                                      ),
-                                    ),
+                                    onPressed: () => Navigator.of(context).pop(false),
+                                    child: Text('Cancel', style: GoogleFonts.inter(color: AppColors.textSecondary)),
                                   ),
                                   TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(true),
-                                    child: Text(
-                                      'Delete',
-                                      style: GoogleFonts.inter(
-                                        color: const Color(0xFFE53935),
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
+                                    onPressed: () => Navigator.of(context).pop(true),
+                                    child: Text('Delete', style: GoogleFonts.inter(color: AppColors.error, fontWeight: FontWeight.w600)),
                                   ),
                                 ],
                               ),
                             );
-
                             if (confirmed != true) return;
-
                             if (!mounted) return;
-                            final success = await profileProvider
-                                .deleteMaterial(materialId);
-
+                            final success = await profileProvider.deleteMaterial(materialId);
                             if (!mounted) return;
-                            if (success) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text(
-                                    'Material deleted successfully',
-                                  ),
-                                  backgroundColor: const Color(0xFF4CAF50),
-                                  duration: const Duration(seconds: 2),
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text(
-                                    'Failed to delete material',
-                                  ),
-                                  backgroundColor: AppColors.error,
-                                  duration: const Duration(seconds: 2),
-                                ),
-                              );
-                            }
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(success ? 'Material deleted successfully' : 'Failed to delete material'),
+                              backgroundColor: success ? AppColors.success : AppColors.error,
+                            ));
                           },
                         ),
                         _MaterialListTab(
@@ -262,15 +152,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
             ),
 
-            // Logout button
+            // Logout button — red
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
               child: GradientButton(
                 text: 'Logout',
                 icon: Icons.logout_rounded,
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFE53935), Color(0xFFFF5252)],
-                ),
+                gradient: const LinearGradient(colors: [Color(0xFFEF5350), Color(0xFFFF5252)]),
                 onPressed: () async {
                   await authProvider.logout();
                   if (!context.mounted) return;
@@ -290,30 +178,16 @@ class _StatItem extends StatelessWidget {
   final String value;
   final IconData icon;
 
-  const _StatItem({
-    required this.label,
-    required this.value,
-    required this.icon,
-  });
+  const _StatItem({required this.label, required this.value, required this.icon});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(icon, color: AppColors.accentOrange, size: 22),
+        Icon(icon, color: AppColors.gradientStart, size: 22),
         const SizedBox(height: 4),
-        Text(
-          value,
-          style: GoogleFonts.poppins(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        Text(
-          label,
-          style: GoogleFonts.inter(fontSize: 12, color: AppColors.textHint),
-        ),
+        Text(value, style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+        Text(label, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textHint)),
       ],
     );
   }
@@ -342,19 +216,12 @@ class _MaterialListTab extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: AppColors.surfaceElevated,
-                borderRadius: BorderRadius.circular(16),
-              ),
+              width: 60, height: 60,
+              decoration: BoxDecoration(color: AppColors.surfaceElevated, borderRadius: BorderRadius.circular(16)),
               child: Icon(emptyIcon, color: AppColors.textHint, size: 30),
             ),
             const SizedBox(height: 12),
-            Text(
-              emptyMessage,
-              style: GoogleFonts.inter(fontSize: 14, color: AppColors.textHint),
-            ),
+            Text(emptyMessage, style: GoogleFonts.inter(fontSize: 14, color: AppColors.textHint)),
           ],
         ),
       );
@@ -373,25 +240,16 @@ class _MaterialListTab extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.surfaceCard,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: AppColors.surfaceElevated.withValues(alpha: 0.5),
-                width: 1,
-              ),
             ),
             child: Row(
               children: [
                 Container(
-                  width: 44,
-                  height: 44,
+                  width: 44, height: 44,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryBlue.withValues(alpha: 0.15),
+                    color: AppColors.gradientStart.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    Icons.insert_drive_file_rounded,
-                    color: AppColors.primaryBlue,
-                    size: 22,
-                  ),
+                  child: Icon(Icons.insert_drive_file_rounded, color: AppColors.gradientStart, size: 22),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -400,46 +258,26 @@ class _MaterialListTab extends StatelessWidget {
                     children: [
                       Text(
                         m.title.isNotEmpty ? m.title : 'Untitled Material',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: m.title.isNotEmpty
-                              ? AppColors.textPrimary
-                              : AppColors.textHint,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600,
+                            color: m.title.isNotEmpty ? AppColors.textPrimary : AppColors.textHint),
+                        maxLines: 1, overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 2),
-                      Text(
-                        m.subject.isNotEmpty ? m.subject : 'No subject',
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          color: AppColors.textHint,
-                        ),
-                      ),
+                      Text(m.subject.isNotEmpty ? m.subject : 'No subject',
+                          style: GoogleFonts.inter(fontSize: 12, color: AppColors.textHint)),
                     ],
                   ),
                 ),
-                // Delete button - only shown in My Uploads
                 if (isUploads && onDelete != null)
                   GestureDetector(
                     onTap: () => onDelete!(m.id),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8),
-                      child: Icon(
-                        Icons.delete_rounded,
-                        color: AppColors.textHint,
-                        size: 20,
-                      ),
+                      child: Icon(Icons.delete_rounded, color: AppColors.textHint, size: 20),
                     ),
                   )
                 else
-                  const Icon(
-                    Icons.chevron_right_rounded,
-                    color: AppColors.textHint,
-                    size: 22,
-                  ),
+                  const Icon(Icons.chevron_right_rounded, color: AppColors.textHint, size: 22),
               ],
             ),
           ),

@@ -18,42 +18,22 @@ class MaterialCard extends StatelessWidget {
   IconData _getFileIcon() {
     final ext = material.fileExtension.toLowerCase();
     switch (ext) {
-      case 'pdf':
-        return Icons.picture_as_pdf_rounded;
-      case 'doc':
-      case 'docx':
-        return Icons.description_rounded;
-      case 'ppt':
-      case 'pptx':
-        return Icons.slideshow_rounded;
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-      case 'gif':
-        return Icons.image_rounded;
-      default:
-        return Icons.insert_drive_file_rounded;
+      case 'pdf': return Icons.picture_as_pdf_rounded;
+      case 'doc': case 'docx': return Icons.description_rounded;
+      case 'ppt': case 'pptx': return Icons.slideshow_rounded;
+      case 'jpg': case 'jpeg': case 'png': case 'gif': return Icons.image_rounded;
+      default: return Icons.insert_drive_file_rounded;
     }
   }
 
   Color _getFileColor() {
     final ext = material.fileExtension.toLowerCase();
     switch (ext) {
-      case 'pdf':
-        return const Color(0xFFE53935);
-      case 'doc':
-      case 'docx':
-        return const Color(0xFF1565C0);
-      case 'ppt':
-      case 'pptx':
-        return const Color(0xFFD84315);
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-      case 'gif':
-        return const Color(0xFF43A047);
-      default:
-        return AppColors.primaryBlue;
+      case 'pdf': return const Color(0xFFE53935);
+      case 'doc': case 'docx': return const Color(0xFF1565C0);
+      case 'ppt': case 'pptx': return const Color(0xFFD84315);
+      case 'jpg': case 'jpeg': case 'png': case 'gif': return const Color(0xFF43A047);
+      default: return AppColors.gradientStart;
     }
   }
 
@@ -73,20 +53,12 @@ class MaterialCard extends StatelessWidget {
             color: AppColors.surfaceElevated.withValues(alpha: 0.5),
             width: 1,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // File type icon
               Container(
                 width: 52,
                 height: 52,
@@ -94,20 +66,13 @@ class MaterialCard extends StatelessWidget {
                   color: _getFileColor().withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  _getFileIcon(),
-                  color: _getFileColor(),
-                  size: 28,
-                ),
+                child: Icon(_getFileIcon(), color: _getFileColor(), size: 28),
               ),
               const SizedBox(width: 14),
-
-              // Content
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title
                     Text(
                       material.title,
                       style: const TextStyle(
@@ -119,13 +84,10 @@ class MaterialCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-
-                    // Subject badge
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        gradient: AppColors.blueOrangeGradient,
+                        gradient: AppColors.primaryGradient,
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -138,20 +100,17 @@ class MaterialCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-
-                    // Rating + downloads row
                     Row(
                       children: [
                         RatingBarIndicator(
                           rating: material.averageRating,
                           itemBuilder: (context, _) => const Icon(
                             Icons.star_rounded,
-                            color: AppColors.accentOrange,
+                            color: AppColors.gradientStart,
                           ),
                           itemCount: 5,
                           itemSize: 16,
-                          unratedColor:
-                              AppColors.surfaceElevated,
+                          unratedColor: AppColors.surfaceElevated,
                         ),
                         const SizedBox(width: 6),
                         Text(
@@ -163,40 +122,25 @@ class MaterialCard extends StatelessWidget {
                           ),
                         ),
                         const Spacer(),
-                        Icon(
-                          Icons.download_rounded,
-                          color: AppColors.textHint,
-                          size: 14,
-                        ),
+                        const Icon(Icons.download_rounded, color: AppColors.textHint, size: 14),
                         const SizedBox(width: 4),
                         Text(
                           '${material.downloadCount}',
-                          style: const TextStyle(
-                            color: AppColors.textHint,
-                            fontSize: 12,
-                          ),
+                          style: const TextStyle(color: AppColors.textHint, fontSize: 12),
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-
-              // Bookmark button
               GestureDetector(
-                onTap: () {
-                  bookmarkProvider.toggleBookmark(material.id);
-                },
+                onTap: () => bookmarkProvider.toggleBookmark(material.id),
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 200),
                   child: Icon(
-                    isBookmarked
-                        ? Icons.bookmark_rounded
-                        : Icons.bookmark_border_rounded,
+                    isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
                     key: ValueKey(isBookmarked),
-                    color: isBookmarked
-                        ? AppColors.accentOrange
-                        : AppColors.textHint,
+                    color: isBookmarked ? AppColors.gradientStart : AppColors.textHint,
                     size: 24,
                   ),
                 ),

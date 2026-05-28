@@ -28,15 +28,15 @@ class GradientButton extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         gradient: onPressed != null
-            ? (gradient ?? AppColors.blueOrangeGradient)
+            ? (gradient ?? AppColors.primaryGradient)
             : LinearGradient(
-                colors: [Colors.grey.shade700, Colors.grey.shade600],
+                colors: [Colors.grey.shade800, Colors.grey.shade700],
               ),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(30),
         boxShadow: onPressed != null
             ? [
                 BoxShadow(
-                  color: AppColors.primaryBlue.withValues(alpha: 0.3),
+                  color: AppColors.gradientStart.withValues(alpha: 0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -47,7 +47,7 @@ class GradientButton extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: isLoading ? null : onPressed,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(30),
           child: Center(
             child: isLoading
                 ? const SizedBox(
@@ -55,8 +55,7 @@ class GradientButton extends StatelessWidget {
                     height: 24,
                     child: CircularProgressIndicator(
                       strokeWidth: 2.5,
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(AppColors.textPrimary),
+                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.textPrimary),
                     ),
                   )
                 : Row(
